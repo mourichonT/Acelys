@@ -1,0 +1,182 @@
+{% extends 'emails/base.email.html.twig' %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% apply inline_css %}
+        <style> 
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            h1 {
+                color: white;
+                text-align: center;
+                font-size: 45px;
+            }
+
+            h3{
+                color: white;
+                text-align: center;
+            }
+
+            .headerContainer{
+                background-color : #0034b4;
+                margin-top: 0px;
+                height:auto; 
+                padding : 45px;            
+            }
+
+            p {
+                color : #525252;
+                font-size: 1.2em;
+                margin-top: 20px;
+            }
+
+            .parag {
+                margin-left : 35px;
+            }
+
+            .tab {
+               margin-left : 35px;
+               margin-right : 35px;
+               border-radius: 10px;
+               display : flex;
+               flex-direction: column;
+            }
+
+            #act_table {
+                border-collapse: collapse;
+                width: 100%;
+                border-radius : 10px;
+            }
+
+            #act_table td, #act_table th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            #act_table .tr:nth-child(even){
+                background-color: #f2f2f2;
+            }
+
+            #act_table th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #8a8a8a;
+                color: white;
+            }
+
+            .button{
+                border: none;
+                color: white;
+                text-decoration: none;
+                font-size: 18px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 10px;
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .button:active {
+                transform: translateY(3px);
+                box-shadow: 3px 2px 5px 1px rgba(0,0,0,0.25);
+                box-shadow: inset inset 3px 3px 5px 3px rgba(0,0,0,0.75);
+            }
+
+            .btn-view-project{
+                display: inline-block;
+                background-color: #0034b4;
+                padding: 6px 45px;
+            }
+            
+            .bnt-edit{
+                display: inline-block;
+                float: right;
+                padding: 6px 45px;
+                background-color: green;
+            }
+            
+            #action{
+                text-align : center;
+            }
+
+            .isManaged{
+                width : auto;
+                margin-left: 40%;
+                text-align: right;
+                margin-right: 15px;
+                color : green;
+                font-size: 25px; 
+            }
+
+            .col-form{
+                width: 15% ;
+            }
+
+            .bvp-place{
+                margin-top : 20px;
+                margin-left: 40%;
+                width :20%;
+                text-align: center;
+            }
+
+        </style>
+        <div class="headerContainer">
+            <i class="fa-regular fa-file-chart-pie"></i>
+            <h1> Activities' report</h1>
+            <h3> from {{ date}} </h3>
+        </div>
+        <div class="parag">    
+            <p>  Hello {{admin.firstName}} , </p>
+            <p> You have news activities in your projects. <br/>
+            Please find them in the Activities' daily report below.</p>
+    
+        </div>
+        <div class ="tab">
+            <table id="act_table">
+               <tr class ="columns">
+                    <th scope = "col"> Activity's id</th>
+                    <th scope = "col"> Activity's name</th>
+                    <th scope = "col"> Project's name</th>
+                    <th class ="col-form" scope = "col"> Synchronized </th>
+                    <th class = "col-form" #id="action" scope = "col"> Action</th>
+                </tr>
+                    {% for activity in activities %} 
+                        <tr class="rows">
+                        <td scope="row">{{activity.id}}</td>
+                        <td scope="row">{{activity.summary}}</td>
+                        <td scope="row">{{activity.project}}</td>
+                        <td class ='isManaged' scope="row">
+                            {% if activity.isManaged ==true %} 
+                                &#10004; 
+                            {% endif %}
+                        </td>
+                        {% set urlEdit = ea_url()
+                            .setDashboard('App\\Controller\\Admin\\DashboardController')
+                            .setController('App\\Controller\\Admin\\ActivityCrudController')
+                            .setAction('edit')
+                            .setEntityId(activity.id)
+                            .set('menuIndex', 2) 
+                            %}
+                        <td scope="row">
+                            <a href= {{urlEdit}} class="button bnt-edit" type=submit name="view" value="View">Edit
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </table>
+
+            <div class="bvp-place">
+                {% set urlProject = ea_url()
+                                .setDashboard('App\\Controller\\Admin\\DashboardController')
+                                .setController('App\\Controller\\Admin\\ActivityCrudController')
+                                .setAction('index')
+                                .set('menuIndex', 1) 
+                %}
+                <a href= {{urlProject}}  class="button btn-view-project" type=submit name="view" value="View">View all projects
+            </div>
+        </div>
+    {% endapply %}
+{% endblock %}
+
+
